@@ -8,41 +8,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: CLONAR ARQUIVOS DE REPOSITORIO
-      uses: actions/checkout@v4
+      - name: CLONAR ARQUIVOS DE REPOSITORIO
+        uses: actions/checkout@v4
 
-    - name: CONFIGURAR PYTHON
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
+      - name: CONFIGURAR PYTHON
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-    - name: INSTALAÇÃO DAS DEPENDENCIAS
-      run: |
-        pip install robotframework
-        pip install robotframework-requests
-        pip install Faker
-        pip install robotframework-seleniumlibrary
-        # Instalação das dependências do Chrome para rodar no modo headless
-        sudo apt-get update
-        sudo apt-get install -y xvfb
-        sudo apt-get install -y libxi6 libgconf-2-4
-        sudo apt-get install -y google-chrome-stable
+      - name: INSTALAÇÃO DAS DEPENDENCIAS
+        run: |
+          pip install robotframework
+          pip install robotframework-requests
+          pip install Faker
+          pip install robotframework-seleniumlibrary
+          # Instalação do Chrome em modo headless
+          sudo apt-get update
+          sudo apt-get install -y xvfb libxi6 libgconf-2-4
+          sudo apt-get install -y google-chrome-stable
 
-    - name: EXECUTANDO OS TESTES DE API DO ROBOT
-      env:
-        DISPLAY: :99
-      run: |
-        # Inicia o servidor Xvfb para o modo headless
-        Xvfb :99 & 
-        # Executa os testes
-        robot --variable SELENIUM:chrome --variable HEADLESS:True --outputdir results/ tests/
+      - name: EXECUTANDO OS TESTES DE API DO ROBOT
+        env:
+          DISPLAY: :99
+        run: |
+          Xvfb :99 & 
+          robot --variable BROWSER:chrome --variable HEADLESS:True --outputdir results/ tests/
       
-    - name: Test Report
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: robot-framework-report
-        path: results
+      - name: Test Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: robot-framework-report
+          path: results
 
   deploy:
     name: Deploy GitHub Pages 🌐
@@ -72,6 +69,7 @@ jobs:
       - name: DEPLOY TO GITHUB PAGES
         id: deployment
         uses: actions/deploy-pages@v1
+
 
 
 # name: Robot Framework SEVEREST
